@@ -1,0 +1,1 @@
+# Example application to work with microservices

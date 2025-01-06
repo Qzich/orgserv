@@ -3,9 +3,10 @@ package caserequests
 import (
 	"time"
 
-	"github.com/gofrs/uuid"
-	"github.com/qzich/orgserv/pkg/entity/assets"
-	"github.com/qzich/orgserv/pkg/entity/users"
+	"github.com/qzich/orgserv/entity/assets"
+	"github.com/qzich/orgserv/entity/users"
+
+	"github.com/qzich/orgserv/pkg/uuid"
 )
 
 type Case struct {

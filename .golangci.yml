@@ -1,0 +1,26 @@
+linters:
+  # Disable all linters.
+  # Default: false
+  # disable-all: true
+  # Enable specific linter
+  # https://golangci-lint.run/usage/linters/#enabled-by-default
+  enable:
+    - depguard
+    - errcheck
+  disable:
+    - unused
+
+# golangci-lint config
+linters-settings:
+  depguard:
+    rules:
+      org_deps:
+        # list-mode: lax # allow unless explicitely denied
+        files:
+          - "**/apps/**"
+          - "**/entity/**"
+        allow:
+          - $gostd
+          - github.com/qzich/orgserv
+
+  

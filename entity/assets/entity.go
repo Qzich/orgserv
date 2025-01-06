@@ -3,7 +3,7 @@ package assets
 import (
 	"time"
 
-	"github.com/gofrs/uuid"
+	"github.com/qzich/orgserv/pkg/uuid"
 )
 
 type Asset struct {

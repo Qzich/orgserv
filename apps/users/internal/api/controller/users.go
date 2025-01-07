@@ -9,6 +9,7 @@ import (
 	"github.com/qzich/orgserv/pkg/api"
 	"github.com/qzich/orgserv/pkg/logger"
 	"github.com/qzich/orgserv/pkg/service"
+	"github.com/qzich/orgserv/pkg/uuid"
 )
 
 func NewUser(
@@ -93,5 +94,32 @@ func (u users) CreateUser(w http.ResponseWriter, r *http.Request) {
 	dto.UpdatedAt = user.UpdatedAt
 
 	w.WriteHeader(http.StatusCreated)
+	u.respSender.SendResponse(w, dto)
+}
+
+func (u users) GetUser(w http.ResponseWriter, r *http.Request) {
+	var dto UserDTO
+
+	id := r.PathValue("id")
+
+	userId, err := uuid.FromString(id)
+	if err != nil {
+		u.respSender.SendErrorResponse(w, fmt.Errorf("id is incorrect: %w", api.ErrValidation))
+		return
+	}
+
+	user, err := u.srv.GetUser(r.Context(), userId)
+	if err != nil {
+		u.respSender.SendErrorResponse(w, err)
+		return
+	}
+
+	dto.ID = user.ID.String()
+	dto.Name = user.Name
+	dto.Email = user.Email
+	dto.Kind = user.Kind
+	dto.CreatedAt = user.CreatedAt
+	dto.UpdatedAt = user.UpdatedAt
+
 	u.respSender.SendResponse(w, dto)
 }

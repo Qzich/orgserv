@@ -40,7 +40,7 @@ func main() {
 	userRepo := mysql.NewUsersRepository(db)
 	userService := service.NewUserService(userRepo)
 	usersCtl := controller.NewUser(log, api, api, userService)
-	router := router.New(usersCtl.CreateUser, func(w http.ResponseWriter, r *http.Request) {}, func(w http.ResponseWriter, r *http.Request) {})
+	router := router.New(usersCtl.CreateUser, func(w http.ResponseWriter, r *http.Request) {}, usersCtl.GetUser)
 	ctx := context.Background()
 
 	log.Info(ctx, "Run users service")

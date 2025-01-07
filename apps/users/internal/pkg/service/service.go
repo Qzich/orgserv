@@ -30,3 +30,7 @@ func (c usersService) CreateUser(ctx context.Context, name string, email string,
 
 	return user, c.repo.InsertUser(user)
 }
+
+func (c usersService) GetUser(ctx context.Context, userId uuid.UUID) (users.User, error) {
+	return c.repo.GetUserByID(userId)
+}

@@ -8,4 +8,5 @@ import (
 type UsersRepository interface {
 	InsertUser(data users.User) error
 	UpdateUser(userID uuid.UUID, data users.User) error
+	GetUserByID(userID uuid.UUID) (users.User, error)
 }

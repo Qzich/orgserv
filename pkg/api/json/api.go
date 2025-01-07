@@ -47,6 +47,12 @@ func (j Api) SendErrorResponse(w http.ResponseWriter, err error) {
 		errorMsg = "validation error"
 		httpStatusCode = http.StatusBadRequest
 	}
+
+	if errors.Is(err, api.ErrNotFound) {
+		errorMsg = "not found"
+		httpStatusCode = http.StatusNotFound
+	}
+
 	w.WriteHeader(httpStatusCode)
 
 	data, err := json.Marshal(ValidationErrResponse{Message: errorMsg, Error: err.Error()})

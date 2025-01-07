@@ -9,6 +9,7 @@ import (
 
 	"github.com/qzich/orgserv/apps/users/internal/api/controller"
 	"github.com/qzich/orgserv/apps/users/internal/api/router"
+	"github.com/qzich/orgserv/apps/users/internal/pkg/service"
 	"github.com/qzich/orgserv/pkg/api/json"
 	logger "github.com/qzich/orgserv/pkg/logger/impl"
 )
@@ -16,7 +17,8 @@ import (
 func main() {
 	log := logger.New()
 	api := json.Api{}
-	usersCtl := controller.NewUser(log, api, api)
+	userService := service.NewUserService()
+	usersCtl := controller.NewUser(log, api, api, userService)
 	router := router.New(usersCtl.CreateUser, func(w http.ResponseWriter, r *http.Request) {}, func(w http.ResponseWriter, r *http.Request) {})
 	ctx := context.Background()
 

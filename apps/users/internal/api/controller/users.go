@@ -15,7 +15,7 @@ func NewUser(
 	logger logger.Logger,
 	reqParser api.RequestParser,
 	respSender api.ResponseSender,
-	//srv service.UsersService,
+	srv service.UsersService,
 ) users {
 	if logger == nil {
 		panic("nil logger")
@@ -26,14 +26,14 @@ func NewUser(
 	if respSender == nil {
 		panic("nil response sender")
 	}
-	// if srv == nil {
-	// 	panic("nil user service")
-	// }
+	if srv == nil {
+		panic("nil user service")
+	}
 	return users{
 		logger:     logger,
 		reqParser:  reqParser,
 		respSender: respSender,
-		//srv:        srv,
+		srv:        srv,
 	}
 }
 
@@ -74,9 +74,14 @@ func (u users) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if dto.Kind != "support" && dto.Kind != "customer" {
+		u.respSender.SendErrorResponse(w, fmt.Errorf("kind is incorrect: %w", api.ErrValidation))
+		return
+	}
+
 	// fmt.Printf("%#v", dto)
 
-	user, err := u.srv.CreateUser(r.Context(), dto.Name, dto.Email)
+	user, err := u.srv.CreateUser(r.Context(), dto.Name, dto.Email, dto.Kind)
 	if err != nil {
 		u.respSender.SendErrorResponse(w, err)
 		return

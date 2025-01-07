@@ -12,5 +12,5 @@ var (
 )
 
 type UsersService interface {
-	CreateUser(ctx context.Context, name string, email string) (users.User, error)
+	CreateUser(ctx context.Context, name string, email string, kind string) (users.User, error)
 }

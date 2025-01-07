@@ -9,3 +9,7 @@ type UUID struct {
 func (u UUID) IsNil() bool {
 	return u.uuid.IsNil()
 }
+
+func (u UUID) String() string {
+	return u.uuid.String()
+}

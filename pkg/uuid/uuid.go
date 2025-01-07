@@ -8,6 +8,15 @@ func New() UUID {
 	}
 }
 
+func FromString(s string) (UUID, error) {
+	u, err := uuid.FromString(s)
+	if err != nil {
+		return UUID{}, err
+	}
+
+	return UUID{u}, nil
+}
+
 type UUID struct {
 	uuid uuid.UUID
 }

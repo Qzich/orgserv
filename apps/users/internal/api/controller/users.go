@@ -123,3 +123,29 @@ func (u users) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	u.respSender.SendResponse(w, dto)
 }
+
+func (u users) UsersList(w http.ResponseWriter, r *http.Request) {
+	list := make([]UserDTO, 0)
+
+	users, err := u.srv.AllUsers(r.Context())
+	if err != nil {
+		u.respSender.SendErrorResponse(w, err)
+		return
+	}
+
+	for _, user := range users {
+		var dto UserDTO
+
+		dto.ID = user.ID.String()
+		dto.Name = user.Name
+		dto.Email = user.Email
+		dto.Kind = user.Kind
+		dto.CreatedAt = user.CreatedAt
+		dto.UpdatedAt = user.UpdatedAt
+
+		list = append(list, dto)
+
+	}
+
+	u.respSender.SendResponse(w, list)
+}

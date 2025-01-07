@@ -74,34 +74,36 @@ func (r usersRepository) GetUserByID(userID uuid.UUID) (users.User, error) {
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}, nil
+}
 
-	// var res []users.User
-	// rows, err := db.Query("SELECT id, user_id, name, email, kind, created_at, updated_at FROM users")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer rows.Close()
+func (r usersRepository) SearchUsers() ([]users.User, error) {
+	var res []users.User
 
-	// for rows.Next() {
-	// 	var user userDAO
-	// 	if err := rows.Scan(&user.ID, &user.UserId, &user.Name, &user.Email, &user.Kind, &user.CreatedAt, &user.UpdatedAt); err != nil {
-	// 		panic(err)
-	// 	}
+	rows, err := r.db.Query("SELECT id, user_id, name, email, kind, created_at, updated_at FROM users")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-	// 	userID, err := uuid.FromString(user.UserId)
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
+	for rows.Next() {
+		var user userDAO
+		if err := rows.Scan(&user.ID, &user.UserID, &user.Name, &user.Email, &user.Kind, &user.CreatedAt, &user.UpdatedAt); err != nil {
+			return nil, err
+		}
 
-	// 	res = append(res, users.User{
-	// 		ID:        userID,
-	// 		Name:      user.Name,
-	// 		Email:     user.Email,
-	// 		Kind:      user.Kind,
-	// 		CreatedAt: user.CreatedAt,
-	// 		UpdatedAt: user.UpdatedAt,
-	// 	})
-	// }
-	// return res
+		userID, err := uuid.FromString(user.UserID)
+		if err != nil {
+			return nil, err
+		}
 
+		res = append(res, users.User{
+			ID:        userID,
+			Name:      user.Name,
+			Email:     user.Email,
+			Kind:      user.Kind,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		})
+	}
+	return res, nil
 }

@@ -15,4 +15,5 @@ var (
 type UsersService interface {
 	CreateUser(ctx context.Context, name string, email string, kind string) (users.User, error)
 	GetUser(ctx context.Context, userId uuid.UUID) (users.User, error)
+	AllUsers(ctx context.Context) ([]users.User, error)
 }

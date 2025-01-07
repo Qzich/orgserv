@@ -34,3 +34,16 @@ func (c usersService) CreateUser(ctx context.Context, name string, email string,
 func (c usersService) GetUser(ctx context.Context, userId uuid.UUID) (users.User, error) {
 	return c.repo.GetUserByID(userId)
 }
+
+func (c usersService) AllUsers(ctx context.Context) ([]users.User, error) {
+	searchUsers, err := c.repo.SearchUsers()
+	if err != nil {
+		return nil, err
+	}
+
+	if searchUsers == nil {
+		searchUsers = make([]users.User, 0)
+	}
+
+	return searchUsers, nil
+}

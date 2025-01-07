@@ -7,13 +7,17 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/qzich/orgserv/apps/users/internal/api/controller"
 	"github.com/qzich/orgserv/apps/users/internal/api/router"
-	"github.com/qzich/orgserv/pkg/logger"
+	"github.com/qzich/orgserv/pkg/api/json"
+	logger "github.com/qzich/orgserv/pkg/logger/impl"
 )
 
 func main() {
 	log := logger.New()
-	router := router.New()
+	api := json.Api{}
+	usersCtl := controller.NewUser(log, api, api)
+	router := router.New(usersCtl.CreateUser, func(w http.ResponseWriter, r *http.Request) {}, func(w http.ResponseWriter, r *http.Request) {})
 	ctx := context.Background()
 
 	log.Info(ctx, "Run users service")

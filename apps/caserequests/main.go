@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/qzich/orgserv/apps/caserequests/internal/api/router"
-	"github.com/qzich/orgserv/pkg/logger"
+	logger "github.com/qzich/orgserv/pkg/logger/impl"
 )
 
 func main() {

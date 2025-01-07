@@ -1,36 +1,10 @@
 package logger
 
-import (
-	"context"
-	"fmt"
-)
+import "context"
 
-func New() loggerImpl {
-	return loggerImpl{}
-}
-
-type loggerImpl struct{}
-
-func (l loggerImpl) Warn(ctx context.Context, messages ...string) {
-	for _, v := range messages {
-		fmt.Printf("%s\n", v)
-	}
-}
-
-func (l loggerImpl) Error(ctx context.Context, messages ...string) {
-	for _, v := range messages {
-		fmt.Printf("%s\n", v)
-	}
-}
-
-func (l loggerImpl) Info(ctx context.Context, messages ...string) {
-	for _, v := range messages {
-		fmt.Printf("%s\n", v)
-	}
-}
-
-func (l loggerImpl) Debug(ctx context.Context, messages ...string) {
-	for _, v := range messages {
-		fmt.Printf("%s\n", v)
-	}
+type Logger interface {
+	Warn(ctx context.Context, messages ...string)
+	Error(ctx context.Context, messages ...string)
+	Info(ctx context.Context, messages ...string)
+	Debug(ctx context.Context, messages ...string)
 }

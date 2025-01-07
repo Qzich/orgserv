@@ -23,7 +23,7 @@ func main() {
 	log := logger.New()
 	api := json.Api{}
 
-	db, err := sql.Open("mysql", "root:roo@tcp(127.0.0.1:3306)/users?parseTime=true")
+	db, err := sql.Open("mysql", "root:roo@tcp(127.0.0.1:3306)/orgserv?parseTime=true")
 	if err != nil {
 		panic(err)
 	}

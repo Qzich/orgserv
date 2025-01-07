@@ -7,7 +7,7 @@ services:
       - "3306:3306"
     environment:
         ALLOW_EMPTY_PASSWORD: yes
-        MYSQL_DATABASE: users
+        MYSQL_DATABASE: orgserv
         MYSQL_ROOT_PASSWORD: roo
     volumes:
      - mysql_data:/var/lib/mysql

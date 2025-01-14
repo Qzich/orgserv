@@ -41,7 +41,7 @@ func KindSupport() KindEnum {
 	return kindEnumSupport
 }
 
-func KindEnumFromString(s string) (KindEnum, error) {
+func ParseKindFromString(s string) (KindEnum, error) {
 	switch s {
 	case "customer":
 		return kindEnumSupport, nil

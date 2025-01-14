@@ -38,7 +38,7 @@ func NewUsersRepository(connectionString string) (usersRepository, *sql.DB) {
 }
 
 func (r usersRepository) InsertUser(data users.User) error {
-	// validate whole struct in case if users.User was not initialized
+	// validate whole struct in case if users.User was not initialized via constructor func
 	if err := validate.Struct(data); err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func (r usersRepository) GetUserByID(userID uuid.UUID) (users.User, error) {
 		ID:        userId,
 		Name:      dao.Name,
 		Email:     dao.Email,
-		Kind:      pkg.Must(users.KindEnumFromString(dao.Kind)),
+		Kind:      pkg.Must(users.ParseKindFromString(dao.Kind)),
 		CreatedAt: dao.CreatedAt,
 		UpdatedAt: dao.UpdatedAt,
 	}, nil
@@ -114,7 +114,7 @@ func (r usersRepository) SearchUsers() ([]users.User, error) {
 			ID:        userID,
 			Name:      dao.Name,
 			Email:     dao.Email,
-			Kind:      pkg.Must(users.KindEnumFromString(dao.Kind)),
+			Kind:      pkg.Must(users.ParseKindFromString(dao.Kind)),
 			CreatedAt: dao.CreatedAt,
 			UpdatedAt: dao.UpdatedAt,
 		})

@@ -2,13 +2,9 @@ package service
 
 import (
 	"context"
-	"fmt"
-	"net/mail"
-	"time"
 
 	"github.com/qzich/orgserv/apps/users/internal/pkg/repository"
 	"github.com/qzich/orgserv/entity/users"
-	"github.com/qzich/orgserv/pkg/api"
 	"github.com/qzich/orgserv/pkg/uuid"
 )
 
@@ -21,27 +17,14 @@ func NewUserService(repo repository.UsersRepository) usersService {
 }
 
 func (c usersService) CreateUser(ctx context.Context, name string, email string, kindStr string) (users.User, error) {
-	if len(name) < 4 || len(name) > 255 {
-		return users.User{}, fmt.Errorf("name length is incorrect: %w", api.ErrValidation)
-	}
-
-	if _, err := mail.ParseAddress(email); err != nil {
-		return users.User{}, fmt.Errorf("email is incorrect: %w", api.ErrValidation)
-	}
-
-	kind, err := users.KindEnumFromString(kindStr)
+	kind, err := users.ParseKindFromString(kindStr)
 	if err != nil {
 		return users.User{}, err
 	}
 
-	timeNow := time.Now().UTC()
-	user := users.User{
-		ID:        uuid.New(),
-		Name:      name,
-		Email:     email,
-		Kind:      kind,
-		UpdatedAt: timeNow,
-		CreatedAt: timeNow,
+	user, err := users.NewUser(name, email, kind)
+	if err != nil {
+		return users.User{}, err
 	}
 
 	return user, c.repo.InsertUser(user)

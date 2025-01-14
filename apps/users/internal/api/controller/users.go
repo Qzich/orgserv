@@ -100,8 +100,8 @@ func (u users) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dto.ID = user.ID.String()
-	dto.Name = user.Name
-	dto.Email = user.Email
+	dto.Name = user.Name.Value()
+	dto.Email = user.Email.Value()
 	dto.Kind = user.Kind.String()
 	dto.CreatedAt = user.CreatedAt
 	dto.UpdatedAt = user.UpdatedAt
@@ -122,8 +122,8 @@ func (u users) UsersList(w http.ResponseWriter, r *http.Request) {
 		var dto UserDTO
 
 		dto.ID = user.ID.String()
-		dto.Name = user.Name
-		dto.Email = user.Email
+		dto.Name = user.Name.Value()
+		dto.Email = user.Email.Value()
 		dto.Kind = user.Kind.String()
 		dto.CreatedAt = user.CreatedAt
 		dto.UpdatedAt = user.UpdatedAt

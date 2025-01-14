@@ -3,13 +3,12 @@ package uuid
 import "github.com/gofrs/uuid"
 
 type UUID struct {
-	uuid uuid.UUID
+	uuid *uuid.UUID `validate:"required"`
 }
 
 func New() UUID {
-	return UUID{
-		uuid.Must(uuid.NewV4()),
-	}
+	uuid := uuid.Must(uuid.NewV4())
+	return UUID{&uuid}
 }
 
 func FromString(s string) (UUID, error) {
@@ -18,11 +17,11 @@ func FromString(s string) (UUID, error) {
 		return UUID{}, err
 	}
 
-	return UUID{u}, nil
+	return UUID{&u}, nil
 }
 
 func (u UUID) IsNil() bool {
-	return u.uuid.IsNil()
+	return u.uuid == nil
 }
 
 func (u UUID) String() string {

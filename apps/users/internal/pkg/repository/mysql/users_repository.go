@@ -46,8 +46,8 @@ func (r usersRepository) InsertUser(data users.User) error {
 	_, err := r.db.Exec(
 		"INSERT INTO users (user_id, name, email, kind, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
 		data.ID.String(),
-		data.Name,
-		data.Email,
+		data.Name.Value(),
+		data.Email.Value(),
 		data.Kind.String(), // TODO: use kind value or id
 		data.CreatedAt,
 		data.UpdatedAt,
@@ -82,8 +82,8 @@ func (r usersRepository) GetUserByID(userID uuid.UUID) (users.User, error) {
 
 	return users.User{
 		ID:        userId,
-		Name:      dao.Name,
-		Email:     dao.Email,
+		Name:      pkg.Must(users.NewName(dao.Name)),
+		Email:     pkg.Must(users.NewEmail(dao.Email)),
 		Kind:      pkg.Must(users.ParseKindFromString(dao.Kind)),
 		CreatedAt: dao.CreatedAt,
 		UpdatedAt: dao.UpdatedAt,
@@ -112,8 +112,8 @@ func (r usersRepository) SearchUsers() ([]users.User, error) {
 
 		res = append(res, users.User{
 			ID:        userID,
-			Name:      dao.Name,
-			Email:     dao.Email,
+			Name:      pkg.Must(users.NewName(dao.Name)),
+			Email:     pkg.Must(users.NewEmail(dao.Email)),
 			Kind:      pkg.Must(users.ParseKindFromString(dao.Kind)),
 			CreatedAt: dao.CreatedAt,
 			UpdatedAt: dao.UpdatedAt,

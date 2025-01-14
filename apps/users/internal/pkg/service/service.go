@@ -16,8 +16,18 @@ func NewUserService(repo repository.UsersRepository) usersService {
 	return usersService{repo: repo}
 }
 
-func (c usersService) CreateUser(ctx context.Context, name string, email string, kindStr string) (users.User, error) {
+func (c usersService) CreateUser(ctx context.Context, nameStr string, emailStr string, kindStr string) (users.User, error) {
 	kind, err := users.ParseKindFromString(kindStr)
+	if err != nil {
+		return users.User{}, err
+	}
+
+	email, err := users.NewEmail(emailStr)
+	if err != nil {
+		return users.User{}, err
+	}
+
+	name, err := users.NewName(nameStr)
 	if err != nil {
 		return users.User{}, err
 	}

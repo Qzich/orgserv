@@ -3,9 +3,9 @@ package controller
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/qzich/orgserv/pkg/api"
+	"github.com/qzich/orgserv/pkg/api/dto"
 	"github.com/qzich/orgserv/pkg/logger"
 	"github.com/qzich/orgserv/pkg/service"
 	"github.com/qzich/orgserv/pkg/uuid"
@@ -17,15 +17,6 @@ type (
 		reqParser  api.RequestParser
 		respSender api.ResponseSender
 		srv        service.UsersService
-	}
-
-	UserDTO struct {
-		ID        string    `json:"id" readonly:"true"`
-		Name      string    `json:"name" validate:"required,min=4,max=255"`
-		Email     string    `json:"email" validate:"required,email"`
-		Kind      string    `json:"kind" validate:"required"`
-		CreatedAt time.Time `json:"created_at" readonly:"true"`
-		UpdatedAt time.Time `json:"updated_at" readonly:"true"`
 	}
 )
 
@@ -56,7 +47,7 @@ func NewUser(
 }
 
 func (u users) CreateUser(w http.ResponseWriter, r *http.Request) {
-	var dto UserDTO
+	var dto dto.UserDTO
 	if err := u.reqParser.ParseFromBytes(r.Body, &dto); err != nil {
 		u.logger.Error(r.Context(), "unable to parse create user request", err.Error())
 
@@ -83,7 +74,7 @@ func (u users) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u users) GetUser(w http.ResponseWriter, r *http.Request) {
-	var dto UserDTO
+	var dto dto.UserDTO
 
 	id := r.PathValue("id")
 
@@ -110,7 +101,7 @@ func (u users) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u users) UsersList(w http.ResponseWriter, r *http.Request) {
-	list := make([]UserDTO, 0)
+	list := make([]dto.UserDTO, 0)
 
 	users, err := u.srv.AllUsers(r.Context())
 	if err != nil {
@@ -119,7 +110,7 @@ func (u users) UsersList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, user := range users {
-		var dto UserDTO
+		var dto dto.UserDTO
 
 		dto.ID = user.ID.String()
 		dto.Name = user.Name.Value()

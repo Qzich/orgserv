@@ -2,6 +2,10 @@ package uuid
 
 import "github.com/gofrs/uuid"
 
+type UUID struct {
+	uuid uuid.UUID
+}
+
 func New() UUID {
 	return UUID{
 		uuid.Must(uuid.NewV4()),
@@ -15,10 +19,6 @@ func FromString(s string) (UUID, error) {
 	}
 
 	return UUID{u}, nil
-}
-
-type UUID struct {
-	uuid uuid.UUID
 }
 
 func (u UUID) IsNil() bool {

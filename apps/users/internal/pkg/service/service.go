@@ -12,12 +12,12 @@ import (
 	"github.com/qzich/orgserv/pkg/uuid"
 )
 
-func NewUserService(repo repository.UsersRepository) usersService {
-	return usersService{repo: repo}
-}
-
 type usersService struct {
 	repo repository.UsersRepository
+}
+
+func NewUserService(repo repository.UsersRepository) usersService {
+	return usersService{repo: repo}
 }
 
 func (c usersService) CreateUser(ctx context.Context, name string, email string, kind string) (users.User, error) {
@@ -35,10 +35,11 @@ func (c usersService) CreateUser(ctx context.Context, name string, email string,
 
 	timeNow := time.Now().UTC()
 	user := users.User{
-		ID:        uuid.New(),
-		Name:      name,
-		Email:     email,
-		Kind:      kind,
+		ID:    uuid.New(),
+		Name:  name,
+		Email: email,
+		Kind:  users.KindFromString(kind),
+		// Kind:      users.Kind{},
 		UpdatedAt: timeNow,
 		CreatedAt: timeNow,
 	}

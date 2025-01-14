@@ -29,7 +29,7 @@ func main() {
 
 	log.Info(ctx, "Run users service")
 
-	//createUser(ctx, userService)
+	// createUser(ctx, userService)
 	// fmt.Println(getUsers(ctx, userService))
 
 	if err := http.ListenAndServe(":8080", router); err != nil {

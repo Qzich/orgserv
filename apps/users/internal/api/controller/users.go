@@ -11,6 +11,24 @@ import (
 	"github.com/qzich/orgserv/pkg/uuid"
 )
 
+type (
+	users struct {
+		logger     logger.Logger
+		reqParser  api.RequestParser
+		respSender api.ResponseSender
+		srv        service.UsersService
+	}
+
+	UserDTO struct {
+		ID        string    `json:"id"`
+		Name      string    `json:"name"`
+		Email     string    `json:"email"`
+		Kind      string    `json:"kind"`
+		CreatedAt time.Time `json:"created_at"`
+		UpdatedAt time.Time `json:"updated_at"`
+	}
+)
+
 func NewUser(
 	logger logger.Logger,
 	reqParser api.RequestParser,
@@ -35,22 +53,6 @@ func NewUser(
 		respSender: respSender,
 		srv:        srv,
 	}
-}
-
-type users struct {
-	logger     logger.Logger
-	reqParser  api.RequestParser
-	respSender api.ResponseSender
-	srv        service.UsersService
-}
-
-type UserDTO struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	Kind      string    `json:"kind"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (u users) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -100,7 +102,7 @@ func (u users) GetUser(w http.ResponseWriter, r *http.Request) {
 	dto.ID = user.ID.String()
 	dto.Name = user.Name
 	dto.Email = user.Email
-	dto.Kind = user.Kind
+	dto.Kind = user.Kind.String()
 	dto.CreatedAt = user.CreatedAt
 	dto.UpdatedAt = user.UpdatedAt
 
@@ -122,7 +124,7 @@ func (u users) UsersList(w http.ResponseWriter, r *http.Request) {
 		dto.ID = user.ID.String()
 		dto.Name = user.Name
 		dto.Email = user.Email
-		dto.Kind = user.Kind
+		dto.Kind = user.Kind.String()
 		dto.CreatedAt = user.CreatedAt
 		dto.UpdatedAt = user.UpdatedAt
 

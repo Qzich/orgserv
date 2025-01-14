@@ -10,7 +10,13 @@ import (
 	"github.com/qzich/orgserv/pkg/api"
 )
 
-type Api struct{}
+type (
+	Api                   struct{}
+	ValidationErrResponse struct {
+		Message string `json:"message"`
+		Error   string `json:"error"`
+	}
+)
 
 func (j Api) ParseFromBytes(r io.Reader, v any) error {
 	rBytes, err := io.ReadAll(r)
@@ -30,11 +36,6 @@ func (j Api) ParseFromBytes(r io.Reader, v any) error {
 	}
 
 	return nil
-}
-
-type ValidationErrResponse struct {
-	Message string `json:"message"`
-	Error   string `json:"error"`
 }
 
 func (j Api) SendErrorResponse(w http.ResponseWriter, err error) {

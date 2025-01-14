@@ -5,11 +5,11 @@ import (
 	"fmt"
 )
 
+type loggerImpl struct{}
+
 func New() loggerImpl {
 	return loggerImpl{}
 }
-
-type loggerImpl struct{}
 
 func (l loggerImpl) Warn(ctx context.Context, messages ...string) {
 	for _, v := range messages {

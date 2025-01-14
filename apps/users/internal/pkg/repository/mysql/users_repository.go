@@ -44,7 +44,7 @@ func (r usersRepository) InsertUser(data users.User) error {
 	}
 
 	_, err := r.db.Exec(
-		"INSERT INTO users (user_id, name, email, kind, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO users (user_id, name, email, kind, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
 		data.ID.String(),
 		data.Name.Value(),
 		data.Email.Value(),

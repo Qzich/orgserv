@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"net/http"
-	"net/mail"
 	"time"
 
 	"github.com/qzich/orgserv/pkg/api"
@@ -63,22 +62,7 @@ func (u users) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u.logger.Debug(r.Context(), dto.Email, dto.Name)
-
-	if len(dto.Name) < 4 || len(dto.Name) > 255 {
-		u.respSender.SendErrorResponse(w, fmt.Errorf("name is incorrect: %w", api.ErrValidation))
-		return
-	}
-
-	if _, err := mail.ParseAddress(dto.Email); err != nil {
-		u.respSender.SendErrorResponse(w, fmt.Errorf("email is incorrect: %w", api.ErrValidation))
-		return
-	}
-
-	if dto.Kind != "support" && dto.Kind != "customer" {
-		u.respSender.SendErrorResponse(w, fmt.Errorf("kind is incorrect: %w", api.ErrValidation))
-		return
-	}
+	u.logger.Debug(r.Context(), dto.Email, dto.Name, dto.Kind)
 
 	// fmt.Printf("%#v", dto)
 
@@ -89,7 +73,6 @@ func (u users) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dto.ID = user.ID.String()
-	dto.Kind = user.Kind
 	dto.CreatedAt = user.CreatedAt
 	dto.UpdatedAt = user.UpdatedAt
 

@@ -22,6 +22,5 @@ linters-settings:
         allow:
           - $gostd
           - github.com/qzich/orgserv
-          - github.com/go-sql-driver/mysql
 
   

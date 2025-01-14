@@ -7,11 +7,17 @@ import (
 
 	"github.com/qzich/orgserv/entity/users"
 	"github.com/qzich/orgserv/pkg/api"
+	"github.com/qzich/orgserv/pkg/storage"
 	"github.com/qzich/orgserv/pkg/uuid"
 )
 
-func NewUsersRepository(db *sql.DB) usersRepository {
-	return usersRepository{db: db}
+func NewUsersRepository(connectionString string) (usersRepository, *sql.DB) {
+	db, err := storage.NewMysqlConnection(connectionString)
+	if err != nil {
+		panic(err)
+	}
+
+	return usersRepository{db: db}, db
 }
 
 type usersRepository struct {

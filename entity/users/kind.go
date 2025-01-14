@@ -1,8 +1,20 @@
 package users
 
+import (
+	"fmt"
+
+	"github.com/qzich/orgserv/pkg"
+	"github.com/qzich/orgserv/pkg/api"
+)
+
+var (
+	kindEnumCustomer = pkg.Must(NewKindEnum(uint8(kindCustomer)))
+	kindEnumSupport  = pkg.Must(NewKindEnum(uint8(kindSupport)))
+)
+
 type (
-	kind uint8
-	Kind struct {
+	kind     uint8
+	KindEnum struct {
 		*uint8 `validate:"required"`
 	}
 )
@@ -10,48 +22,47 @@ type (
 const (
 	kindCustomer kind = iota + 1
 	kindSupport
-	// kindNew
 )
 
-func NewKind(v uint8) Kind {
+func NewKindEnum(v uint8) (KindEnum, error) {
 	switch kind(v) {
 	case kindCustomer, kindSupport:
-		return Kind{&v}
+		return KindEnum{&v}, nil
 	}
 
-	panic("invalid kind value")
+	return KindEnum{}, fmt.Errorf("kind is incorrect: %w", api.ErrValidation)
 }
 
-func KindCustomer() Kind {
-	return NewKind(uint8(kindCustomer))
+func KindCustomer() KindEnum {
+	return kindEnumCustomer
 }
 
-func KindSupport() Kind {
-	return NewKind(uint8(kindSupport))
+func KindSupport() KindEnum {
+	return kindEnumSupport
 }
 
-func KindFromString(s string) Kind {
+func KindEnumFromString(s string) (KindEnum, error) {
 	switch s {
 	case "customer":
-		return KindCustomer()
+		return kindEnumSupport, nil
 	case "support":
-		return KindSupport()
+		return kindEnumCustomer, nil
 	}
 
-	panic("invalid kind string")
+	return KindEnum{}, fmt.Errorf("invalid kind string: %w", api.ErrValidation)
 }
 
-func (k Kind) String() string {
-	switch kind(k.Value()) {
-	case kindCustomer:
+func (k KindEnum) String() string {
+	switch k {
+	case kindEnumSupport:
 		return "customer"
-	case kindSupport:
+	case kindEnumCustomer:
 		return "support"
 	}
 
-	panic("invalid kind value")
+	return ""
 }
 
-func (k Kind) Value() uint8 {
+func (k KindEnum) Value() uint8 {
 	return *k.uint8
 }

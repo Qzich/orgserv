@@ -7,3 +7,4 @@ TODO:
  - swagger doc
  - users service client
  - handle panics (500 error)
+ - unit tests

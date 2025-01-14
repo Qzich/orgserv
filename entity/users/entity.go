@@ -8,9 +8,9 @@ import (
 
 type User struct {
 	ID        uuid.UUID
-	Name      string // required, min 4, max 255
-	Email     string // required, email format
-	Kind      Kind   // required, support, customer
+	Name      string   // required, min 4, max 255
+	Email     string   // required, email format
+	Kind      KindEnum // required, support, customer
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

@@ -2,10 +2,12 @@ module github.com/qzich/orgserv
 
 go 1.23.4
 
-require github.com/gofrs/uuid v4.4.0+incompatible
+require (
+	github.com/gofrs/uuid v4.4.0+incompatible
+	github.com/golang/mock v1.6.0
+)
 
 replace github.com/go-playground/validator/v10 => /Users/ykuzich/Development/github.com/go-playground/validator/v10@v10.24.0
-
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect

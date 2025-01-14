@@ -57,6 +57,7 @@ linters-settings:
         files:
           - "**/apps/**"
           - "**/entity/**"
+          - "!$test"
         allow:
           - $gostd
           - github.com/qzich/orgserv

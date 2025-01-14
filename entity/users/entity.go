@@ -13,7 +13,7 @@ type User struct {
 	ID        uuid.UUID `validate:"required,uuid"`
 	Name      string    `validate:"required"` // min 4, max 255
 	Email     string    `validate:"required"` // email format
-	Kind      KindEnum  // support, customer
+	Kind      KindEnum
 	CreatedAt time.Time `validate:"required"`
 	UpdatedAt time.Time `validate:"required"`
 }

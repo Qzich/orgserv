@@ -6,18 +6,14 @@ import (
 	"github.com/qzich/orgserv/pkg/api"
 )
 
-type Name struct {
-	*string `validate:"required"`
-}
+var NameIsNotCorrect = fmt.Errorf("name length is incorrect: %w", api.ErrValidation)
 
-func NewName(name string) (Name, error) {
+type Name string
+
+func (name Name) Validate() error {
 	if len(name) < 4 || len(name) > 255 {
-		return Name{}, fmt.Errorf("name length is incorrect: %w", api.ErrValidation)
+		return NameIsNotCorrect
 	}
 
-	return Name{&name}, nil
-}
-
-func (n Name) Value() string {
-	return *n.string
+	return nil
 }

@@ -7,18 +7,14 @@ import (
 	"github.com/qzich/orgserv/pkg/api"
 )
 
-type Email struct {
-	*string `validate:"required"`
-}
+var EmailIsNotCorrect = fmt.Errorf("email is incorrect: %w", api.ErrValidation)
 
-func NewEmail(email string) (Email, error) {
-	if _, err := mail.ParseAddress(email); err != nil {
-		return Email{}, fmt.Errorf("email is incorrect: %w", api.ErrValidation)
+type Email string
+
+func (e Email) Validate() error {
+	if _, err := mail.ParseAddress(string(e)); err != nil {
+		return EmailIsNotCorrect
 	}
 
-	return Email{&email}, nil
-}
-
-func (e Email) Value() string {
-	return *e.string
+	return nil
 }

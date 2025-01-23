@@ -2,36 +2,39 @@ package users
 
 import (
 	"context"
+	"time"
 
 	"github.com/qzich/orgserv/entity/users"
 	"github.com/qzich/orgserv/pkg/api/dto"
+	"github.com/qzich/orgserv/pkg/uuid"
 )
 
 type usersServiceClient struct{}
 
-func (c usersServiceClient) CreateUser(ctx context.Context, nameStr string, emailStr string, kindStr string) (users.User, error) {
+func (c usersServiceClient) CreateUser(ctx context.Context, name string, email string, kindStr string) (users.User, error) {
+	if err := users.Name(name).Validate(); err != nil {
+		return users.User{}, err
+	}
+
+	if err := users.Email(email).Validate(); err != nil {
+		return users.User{}, err
+	}
+
 	kind, err := users.ParseKindFromString(kindStr)
-	if err != nil {
-		return users.User{}, err
-	}
-
-	email, err := users.NewEmail(emailStr)
-	if err != nil {
-		return users.User{}, err
-	}
-
-	name, err := users.NewName(nameStr)
 	if err != nil {
 		return users.User{}, err
 	}
 
 	var userDTO dto.UserDTO
 
-	userDTO.Name = name.Value()
-	userDTO.Email = email.Value()
+	userDTO.Name = name
+	userDTO.Email = email
 	userDTO.Kind = kind.String()
 	// TOOD: send json payload to create user endpoint
 	_ = userDTO
 
-	return users.NewUser(name, email, kind)
+	timeNow := time.Now().UTC()
+	userId := uuid.New()
+
+	return users.NewUser(userId, name, email, kind, timeNow, timeNow)
 }

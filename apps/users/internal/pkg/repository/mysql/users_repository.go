@@ -10,7 +10,6 @@ import (
 	"github.com/qzich/orgserv/pkg/api"
 	"github.com/qzich/orgserv/pkg/storage"
 	"github.com/qzich/orgserv/pkg/uuid"
-	"github.com/qzich/orgserv/pkg/validate"
 )
 
 type (
@@ -38,19 +37,23 @@ func NewUsersRepository(connectionString string) (usersRepository, *sql.DB) {
 }
 
 func (r usersRepository) InsertUser(data users.User) error {
-	// validate whole struct in case if users.User was not initialized via constructor func
-	if err := validate.Struct(data); err != nil {
-		return err
+	// // validate whole struct in case if users.User was not initialized via constructor func
+	// if err := validate.Struct(data); err != nil {
+	// 	return err
+	// }
+
+	if data.IsZero() {
+		return api.ErrValidation
 	}
 
 	_, err := r.db.Exec(
 		"INSERT INTO users (user_id, name, email, kind, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-		data.ID.String(),
-		data.Name.Value(),
-		data.Email.Value(),
-		data.Kind.String(), // TODO: use kind value or id
-		data.CreatedAt,
-		data.UpdatedAt,
+		data.ID().String(),
+		data.Name(),
+		data.Email(),
+		data.Kind().String(), // TODO: use kind value or id
+		data.CreatedAt(),
+		data.UpdatedAt(),
 	)
 	if err != nil {
 		return err
@@ -75,19 +78,14 @@ func (r usersRepository) GetUserByID(userID uuid.UUID) (users.User, error) {
 		return users.User{}, err
 	}
 
-	userId, err := uuid.FromString(dao.UserID)
-	if err != nil {
-		return users.User{}, err
-	}
-
-	return users.User{
-		ID:        userId,
-		Name:      pkg.Must(users.NewName(dao.Name)),
-		Email:     pkg.Must(users.NewEmail(dao.Email)),
-		Kind:      pkg.Must(users.ParseKindFromString(dao.Kind)),
-		CreatedAt: dao.CreatedAt,
-		UpdatedAt: dao.UpdatedAt,
-	}, nil
+	return users.NewUser(
+		pkg.Must(uuid.FromString(dao.UserID)),
+		dao.Name,
+		dao.Email,
+		pkg.Must(users.ParseKindFromString(dao.Kind)),
+		dao.CreatedAt,
+		dao.UpdatedAt,
+	)
 }
 
 func (r usersRepository) SearchUsers() ([]users.User, error) {
@@ -105,19 +103,16 @@ func (r usersRepository) SearchUsers() ([]users.User, error) {
 			return nil, err
 		}
 
-		userID, err := uuid.FromString(dao.UserID)
-		if err != nil {
-			return nil, err
-		}
-
-		res = append(res, users.User{
-			ID:        userID,
-			Name:      pkg.Must(users.NewName(dao.Name)),
-			Email:     pkg.Must(users.NewEmail(dao.Email)),
-			Kind:      pkg.Must(users.ParseKindFromString(dao.Kind)),
-			CreatedAt: dao.CreatedAt,
-			UpdatedAt: dao.UpdatedAt,
-		})
+		res = append(res,
+			pkg.Must(users.NewUser(
+				pkg.Must(uuid.FromString(dao.UserID)),
+				dao.Name,
+				dao.Email,
+				pkg.Must(users.ParseKindFromString(dao.Kind)),
+				dao.CreatedAt,
+				dao.UpdatedAt,
+			)),
+		)
 	}
 	return res, nil
 }

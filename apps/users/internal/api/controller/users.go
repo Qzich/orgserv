@@ -65,9 +65,9 @@ func (u users) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dto.ID = user.ID.String()
-	dto.CreatedAt = user.CreatedAt
-	dto.UpdatedAt = user.UpdatedAt
+	dto.ID = user.ID().String()
+	dto.CreatedAt = user.CreatedAt()
+	dto.UpdatedAt = user.UpdatedAt()
 
 	w.WriteHeader(http.StatusCreated)
 	u.respSender.SendResponse(w, dto)
@@ -90,12 +90,12 @@ func (u users) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dto.ID = user.ID.String()
-	dto.Name = user.Name.Value()
-	dto.Email = user.Email.Value()
-	dto.Kind = user.Kind.String()
-	dto.CreatedAt = user.CreatedAt
-	dto.UpdatedAt = user.UpdatedAt
+	dto.ID = user.ID().String()
+	dto.Name = user.Name()
+	dto.Email = user.Email()
+	dto.Kind = user.Kind().String()
+	dto.CreatedAt = user.CreatedAt()
+	dto.UpdatedAt = user.UpdatedAt()
 
 	u.respSender.SendResponse(w, dto)
 }
@@ -112,12 +112,12 @@ func (u users) UsersList(w http.ResponseWriter, r *http.Request) {
 	for _, user := range users {
 		var dto dto.UserDTO
 
-		dto.ID = user.ID.String()
-		dto.Name = user.Name.Value()
-		dto.Email = user.Email.Value()
-		dto.Kind = user.Kind.String()
-		dto.CreatedAt = user.CreatedAt
-		dto.UpdatedAt = user.UpdatedAt
+		dto.ID = user.ID().String()
+		dto.Name = user.Name()
+		dto.Email = user.Email()
+		dto.Kind = user.Kind().String()
+		dto.CreatedAt = user.CreatedAt()
+		dto.UpdatedAt = user.UpdatedAt()
 
 		list = append(list, dto)
 

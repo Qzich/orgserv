@@ -1,14 +1,15 @@
 package uuid
 
-import "github.com/gofrs/uuid"
+import (
+	"github.com/gofrs/uuid"
+	"github.com/qzich/orgserv/pkg"
+)
 
-type UUID struct {
-	uuid *uuid.UUID `validate:"required"`
-}
+type UUID struct{ value *uuid.UUID }
 
 func New() UUID {
-	uuid := uuid.Must(uuid.NewV4())
-	return UUID{&uuid}
+	value := pkg.Must(uuid.NewV4())
+	return UUID{&value}
 }
 
 func FromString(s string) (UUID, error) {
@@ -20,10 +21,10 @@ func FromString(s string) (UUID, error) {
 	return UUID{&u}, nil
 }
 
-func (u UUID) IsNil() bool {
-	return u.uuid == nil
+func (u UUID) IsZero() bool {
+	return u.value == nil
 }
 
 func (u UUID) String() string {
-	return u.uuid.String()
+	return u.value.String()
 }

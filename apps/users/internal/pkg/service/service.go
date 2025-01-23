@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/qzich/orgserv/apps/users/internal/pkg/repository"
 	"github.com/qzich/orgserv/entity/users"
@@ -16,23 +17,30 @@ func NewUserService(repo repository.UsersRepository) usersService {
 	return usersService{repo: repo}
 }
 
-func (c usersService) CreateUser(ctx context.Context, nameStr string, emailStr string, kindStr string) (users.User, error) {
+func (c usersService) CreateUser(ctx context.Context, name string, email string, kindStr string) (users.User, error) {
+	if err := users.Name(name).Validate(); err != nil {
+		return users.User{}, err
+	}
+
+	if err := users.Email(email).Validate(); err != nil {
+		return users.User{}, err
+	}
+
 	kind, err := users.ParseKindFromString(kindStr)
 	if err != nil {
 		return users.User{}, err
 	}
 
-	email, err := users.NewEmail(emailStr)
-	if err != nil {
-		return users.User{}, err
-	}
+	timeNow := time.Now().UTC()
 
-	name, err := users.NewName(nameStr)
-	if err != nil {
-		return users.User{}, err
-	}
-
-	user, err := users.NewUser(name, email, kind)
+	user, err := users.NewUser(
+		uuid.New(),
+		name,
+		email,
+		kind,
+		timeNow,
+		timeNow,
+	)
 	if err != nil {
 		return users.User{}, err
 	}

@@ -1,4 +1,4 @@
-package internal
+package entity
 
 import (
 	"github.com/qzich/orgserv/entity/users"

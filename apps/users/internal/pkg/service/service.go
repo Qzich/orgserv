@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/qzich/orgserv/apps/users/internal"
+	"github.com/qzich/orgserv/apps/users/internal/entity"
 	"github.com/qzich/orgserv/apps/users/internal/pkg/repository"
 	"github.com/qzich/orgserv/entity/users"
 	"github.com/qzich/orgserv/pkg"
@@ -81,7 +81,7 @@ func (c usersService) CreateUser(ctx context.Context, name string, email string,
 
 	return user, c.repo.InsertUser(
 		pkg.Must(
-			internal.NewAuthUser(user, passHash),
+			entity.NewAuthUser(user, passHash),
 		),
 	)
 }
@@ -108,6 +108,6 @@ func (c usersService) hashPassword(password string) string {
 	return "###"
 }
 
-func (c usersService) authenticate(authUser internal.AuthUser, pass string) bool {
+func (c usersService) authenticate(authUser entity.AuthUser, pass string) bool {
 	return authUser.PasswordHash() == c.hashPassword(pass)
 }

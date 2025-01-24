@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/qzich/orgserv/apps/users/internal"
+	"github.com/qzich/orgserv/apps/users/internal/entity"
 	"github.com/qzich/orgserv/entity/users"
 	"github.com/qzich/orgserv/pkg"
 	"github.com/qzich/orgserv/pkg/api"
@@ -37,7 +37,7 @@ func NewUsersRepository(connectionString string) (usersRepository, *sql.DB) {
 	return usersRepository{db: db}, db
 }
 
-func (r usersRepository) InsertUser(data internal.AuthUser) error {
+func (r usersRepository) InsertUser(data entity.AuthUser) error {
 	if data.IsZero() {
 		return api.ErrValidation
 	}
@@ -66,7 +66,7 @@ func (r usersRepository) UpdateUser(userID uuid.UUID, data users.User) error {
 	panic("not implemented") // TODO: Implement
 }
 
-func (r usersRepository) GetAuthUser(email string) (internal.AuthUser, error) {
+func (r usersRepository) GetAuthUser(email string) (entity.AuthUser, error) {
 	var (
 		dao      userDAO
 		passHash string
@@ -76,12 +76,12 @@ func (r usersRepository) GetAuthUser(email string) (internal.AuthUser, error) {
 	).Scan(&dao.ID, &dao.UserID, &dao.Name, &dao.Kind, &passHash, &dao.CreatedAt, &dao.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return internal.AuthUser{}, fmt.Errorf("repo has no rows: %w", api.ErrNotFound)
+			return entity.AuthUser{}, fmt.Errorf("repo has no rows: %w", api.ErrNotFound)
 		}
-		return internal.AuthUser{}, err
+		return entity.AuthUser{}, err
 	}
 
-	return internal.NewAuthUser(
+	return entity.NewAuthUser(
 		pkg.Must(
 			users.NewUser(
 				pkg.Must(uuid.FromString(dao.UserID)),

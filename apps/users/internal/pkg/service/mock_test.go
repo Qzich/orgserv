@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	internal "github.com/qzich/orgserv/apps/users/internal"
+	entity "github.com/qzich/orgserv/apps/users/internal/entity"
 	users "github.com/qzich/orgserv/entity/users"
 	uuid "github.com/qzich/orgserv/pkg/uuid"
 )
@@ -37,10 +37,10 @@ func (m *MockUsersRepository) EXPECT() *MockUsersRepositoryMockRecorder {
 }
 
 // GetAuthUser mocks base method.
-func (m *MockUsersRepository) GetAuthUser(email string) (internal.AuthUser, error) {
+func (m *MockUsersRepository) GetAuthUser(email string) (entity.AuthUser, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAuthUser", email)
-	ret0, _ := ret[0].(internal.AuthUser)
+	ret0, _ := ret[0].(entity.AuthUser)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -67,7 +67,7 @@ func (mr *MockUsersRepositoryMockRecorder) GetUserByID(userID interface{}) *gomo
 }
 
 // InsertUser mocks base method.
-func (m *MockUsersRepository) InsertUser(data internal.AuthUser) error {
+func (m *MockUsersRepository) InsertUser(data entity.AuthUser) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertUser", data)
 	ret0, _ := ret[0].(error)

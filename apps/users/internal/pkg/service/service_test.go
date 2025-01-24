@@ -30,7 +30,7 @@ func Test_service_CreateUser_OK(t *testing.T) {
 
 	service := NewUserService(repositry)
 
-	repositry.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(nil)
+	repositry.EXPECT().InsertUser(gomock.Any()).Return(nil)
 	_, err := service.CreateUser(ctx, "test", "test@gmail.com", "customer", "hash")
 	if err != nil {
 		t.Errorf("%v", err)

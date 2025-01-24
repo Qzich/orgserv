@@ -12,6 +12,6 @@ type (
 
 	ResponseSender interface {
 		SendErrorResponse(http.ResponseWriter, error)
-		SendResponse(http.ResponseWriter, any)
+		SendResponse(w http.ResponseWriter, statusCode int, v any)
 	}
 )

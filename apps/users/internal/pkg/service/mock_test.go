@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	internal "github.com/qzich/orgserv/apps/users/internal"
 	users "github.com/qzich/orgserv/entity/users"
 	uuid "github.com/qzich/orgserv/pkg/uuid"
 )
@@ -36,10 +37,10 @@ func (m *MockUsersRepository) EXPECT() *MockUsersRepositoryMockRecorder {
 }
 
 // GetAuthUser mocks base method.
-func (m *MockUsersRepository) GetAuthUser(email string) (users.AuthUser, error) {
+func (m *MockUsersRepository) GetAuthUser(email string) (internal.AuthUser, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAuthUser", email)
-	ret0, _ := ret[0].(users.AuthUser)
+	ret0, _ := ret[0].(internal.AuthUser)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -66,17 +67,17 @@ func (mr *MockUsersRepositoryMockRecorder) GetUserByID(userID interface{}) *gomo
 }
 
 // InsertUser mocks base method.
-func (m *MockUsersRepository) InsertUser(data users.User, passHash string) error {
+func (m *MockUsersRepository) InsertUser(data internal.AuthUser) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertUser", data, passHash)
+	ret := m.ctrl.Call(m, "InsertUser", data)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // InsertUser indicates an expected call of InsertUser.
-func (mr *MockUsersRepositoryMockRecorder) InsertUser(data, passHash interface{}) *gomock.Call {
+func (mr *MockUsersRepositoryMockRecorder) InsertUser(data interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockUsersRepository)(nil).InsertUser), data, passHash)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockUsersRepository)(nil).InsertUser), data)
 }
 
 // SearchUsers mocks base method.

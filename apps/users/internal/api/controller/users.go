@@ -63,16 +63,18 @@ func (u users) AuthenticateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	u.respSender.SendResponse(w, dto.UserDTO{
-		ID:        user.ID().String(),
-		Name:      user.Name(),
-		Email:     user.Email(),
-		Password:  "",
-		Kind:      user.Kind().String(),
-		CreatedAt: user.CreatedAt(),
-		UpdatedAt: user.UpdatedAt(),
-	})
+	u.respSender.SendResponse(
+		w,
+		http.StatusOK,
+		dto.UserDTO{
+			ID:        user.ID().String(),
+			Name:      user.Name(),
+			Email:     user.Email(),
+			Password:  "",
+			Kind:      user.Kind().String(),
+			CreatedAt: user.CreatedAt(),
+			UpdatedAt: user.UpdatedAt(),
+		})
 }
 
 func (u users) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -98,8 +100,7 @@ func (u users) CreateUser(w http.ResponseWriter, r *http.Request) {
 	dto.CreatedAt = user.CreatedAt()
 	dto.UpdatedAt = user.UpdatedAt()
 
-	w.WriteHeader(http.StatusCreated)
-	u.respSender.SendResponse(w, dto)
+	u.respSender.SendResponse(w, http.StatusCreated, dto)
 }
 
 func (u users) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -126,7 +127,7 @@ func (u users) GetUser(w http.ResponseWriter, r *http.Request) {
 	dto.CreatedAt = user.CreatedAt()
 	dto.UpdatedAt = user.UpdatedAt()
 
-	u.respSender.SendResponse(w, dto)
+	u.respSender.SendResponse(w, http.StatusOK, dto)
 }
 
 func (u users) UsersList(w http.ResponseWriter, r *http.Request) {
@@ -152,5 +153,5 @@ func (u users) UsersList(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	u.respSender.SendResponse(w, list)
+	u.respSender.SendResponse(w, http.StatusOK, list)
 }

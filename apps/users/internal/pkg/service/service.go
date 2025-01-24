@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/qzich/orgserv/apps/users/internal"
 	"github.com/qzich/orgserv/apps/users/internal/pkg/repository"
 	"github.com/qzich/orgserv/entity/users"
+	"github.com/qzich/orgserv/pkg"
 	"github.com/qzich/orgserv/pkg/api"
 	"github.com/qzich/orgserv/pkg/uuid"
 )
@@ -34,7 +36,7 @@ func (c usersService) AuthenticateUser(ctx context.Context, email string, passwo
 		return users.User{}, err
 	}
 
-	if !authUser.Authenticate(password) {
+	if !c.authenticate(authUser, password) {
 		// TODO: add auth error
 		return users.User{}, fmt.Errorf("authentication is failed: %w", api.ErrValidation)
 	}
@@ -42,7 +44,6 @@ func (c usersService) AuthenticateUser(ctx context.Context, email string, passwo
 	return authUser.User(), nil
 }
 
-// TODO: should be plain password, not hash and service will hash it
 func (c usersService) CreateUser(ctx context.Context, name string, email string, kindStr string, password string) (users.User, error) {
 	if err := users.Name(name).Validate(); err != nil {
 		return users.User{}, err
@@ -62,8 +63,7 @@ func (c usersService) CreateUser(ctx context.Context, name string, email string,
 		return users.User{}, fmt.Errorf("password is incorrect: %w", api.ErrValidation)
 	}
 
-	// TODO: do hash function from password here
-	passHash := "####"
+	passHash := c.hashPassword(password)
 
 	timeNow := time.Now().UTC()
 
@@ -79,7 +79,11 @@ func (c usersService) CreateUser(ctx context.Context, name string, email string,
 		return users.User{}, err
 	}
 
-	return user, c.repo.InsertUser(user, passHash)
+	return user, c.repo.InsertUser(
+		pkg.Must(
+			internal.NewAuthUser(user, passHash),
+		),
+	)
 }
 
 func (c usersService) GetUser(ctx context.Context, userId uuid.UUID) (users.User, error) {
@@ -97,4 +101,13 @@ func (c usersService) AllUsers(ctx context.Context) ([]users.User, error) {
 	}
 
 	return searchUsers, nil
+}
+
+func (c usersService) hashPassword(password string) string {
+	// TODO: do hash function from password here
+	return "###"
+}
+
+func (c usersService) authenticate(authUser internal.AuthUser, pass string) bool {
+	return authUser.PasswordHash() == c.hashPassword(pass)
 }

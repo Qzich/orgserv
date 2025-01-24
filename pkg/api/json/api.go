@@ -67,12 +67,13 @@ func (j Api) SendErrorResponse(w http.ResponseWriter, err error) {
 	}
 }
 
-func (j Api) SendResponse(w http.ResponseWriter, v any) {
+func (j Api) SendResponse(w http.ResponseWriter, statusCode int, v any) {
 	data, err := json.Marshal(v)
 	if err != nil {
 		panic(err)
 	}
 
+	w.WriteHeader(statusCode)
 	_, err = w.Write(data)
 	if err != nil {
 		panic(err)

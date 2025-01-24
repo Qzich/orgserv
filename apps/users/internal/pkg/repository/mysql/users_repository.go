@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/qzich/orgserv/apps/users/internal"
 	"github.com/qzich/orgserv/entity/users"
 	"github.com/qzich/orgserv/pkg"
 	"github.com/qzich/orgserv/pkg/api"
@@ -36,29 +37,23 @@ func NewUsersRepository(connectionString string) (usersRepository, *sql.DB) {
 	return usersRepository{db: db}, db
 }
 
-func (r usersRepository) InsertUser(data users.User, passHash string) error {
-	// // validate whole struct in case if users.User was not initialized via constructor func
-	// if err := validate.Struct(data); err != nil {
-	// 	return err
-	// }
-
+func (r usersRepository) InsertUser(data internal.AuthUser) error {
 	if data.IsZero() {
 		return api.ErrValidation
 	}
 
-	if len(passHash) == 0 {
-		return users.PassHashIsNotCorrect
-	}
+	user := data.User()
+	passHash := data.PasswordHash()
 
 	_, err := r.db.Exec(
 		"INSERT INTO users (user_id, name, email, kind, passHash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-		data.ID().String(),
-		data.Name(),
-		data.Email(),
-		data.Kind().String(), // TODO: use kind value or id
+		user.ID().String(),
+		user.Name(),
+		user.Email(),
+		user.Kind().String(), // TODO: use kind value or id
 		passHash,
-		data.CreatedAt(),
-		data.UpdatedAt(),
+		user.CreatedAt(),
+		user.UpdatedAt(),
 	)
 	if err != nil {
 		return err
@@ -71,7 +66,7 @@ func (r usersRepository) UpdateUser(userID uuid.UUID, data users.User) error {
 	panic("not implemented") // TODO: Implement
 }
 
-func (r usersRepository) GetAuthUser(email string) (users.AuthUser, error) {
+func (r usersRepository) GetAuthUser(email string) (internal.AuthUser, error) {
 	var (
 		dao      userDAO
 		passHash string
@@ -81,20 +76,22 @@ func (r usersRepository) GetAuthUser(email string) (users.AuthUser, error) {
 	).Scan(&dao.ID, &dao.UserID, &dao.Name, &dao.Kind, &passHash, &dao.CreatedAt, &dao.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return users.AuthUser{}, fmt.Errorf("repo has no rows: %w", api.ErrNotFound)
+			return internal.AuthUser{}, fmt.Errorf("repo has no rows: %w", api.ErrNotFound)
 		}
-		return users.AuthUser{}, err
+		return internal.AuthUser{}, err
 	}
 
-	return users.NewAuthUser(
-		pkg.Must(users.NewUser(
-			pkg.Must(uuid.FromString(dao.UserID)),
-			dao.Name,
-			email,
-			pkg.Must(users.ParseKindFromString(dao.Kind)),
-			dao.CreatedAt,
-			dao.UpdatedAt,
-		)),
+	return internal.NewAuthUser(
+		pkg.Must(
+			users.NewUser(
+				pkg.Must(uuid.FromString(dao.UserID)),
+				dao.Name,
+				email,
+				pkg.Must(users.ParseKindFromString(dao.Kind)),
+				dao.CreatedAt,
+				dao.UpdatedAt,
+			),
+		),
 		passHash,
 	)
 }

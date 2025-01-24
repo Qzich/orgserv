@@ -46,6 +46,35 @@ func NewUser(
 	}
 }
 
+func (u users) AuthenticateUser(w http.ResponseWriter, r *http.Request) {
+	var dtoAuthUser dto.AuthUser
+	if err := u.reqParser.ParseFromBytes(r.Body, &dtoAuthUser); err != nil {
+		u.logger.Error(r.Context(), "unable to parse auth user request", err.Error())
+
+		u.respSender.SendErrorResponse(w, err)
+		return
+	}
+
+	u.logger.Debug(r.Context(), dtoAuthUser.Email)
+
+	user, err := u.srv.AuthenticateUser(r.Context(), dtoAuthUser.Email, dtoAuthUser.Password)
+	if err != nil {
+		u.respSender.SendErrorResponse(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	u.respSender.SendResponse(w, dto.UserDTO{
+		ID:        user.ID().String(),
+		Name:      user.Name(),
+		Email:     user.Email(),
+		Password:  "",
+		Kind:      user.Kind().String(),
+		CreatedAt: user.CreatedAt(),
+		UpdatedAt: user.UpdatedAt(),
+	})
+}
+
 func (u users) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var dto dto.UserDTO
 	if err := u.reqParser.ParseFromBytes(r.Body, &dto); err != nil {

@@ -35,6 +35,21 @@ func (m *MockUsersRepository) EXPECT() *MockUsersRepositoryMockRecorder {
 	return m.recorder
 }
 
+// GetAuthUser mocks base method.
+func (m *MockUsersRepository) GetAuthUser(email string) (users.AuthUser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAuthUser", email)
+	ret0, _ := ret[0].(users.AuthUser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAuthUser indicates an expected call of GetAuthUser.
+func (mr *MockUsersRepositoryMockRecorder) GetAuthUser(email interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthUser", reflect.TypeOf((*MockUsersRepository)(nil).GetAuthUser), email)
+}
+
 // GetUserByID mocks base method.
 func (m *MockUsersRepository) GetUserByID(userID uuid.UUID) (users.User, error) {
 	m.ctrl.T.Helper()
@@ -51,17 +66,17 @@ func (mr *MockUsersRepositoryMockRecorder) GetUserByID(userID interface{}) *gomo
 }
 
 // InsertUser mocks base method.
-func (m *MockUsersRepository) InsertUser(data users.User) error {
+func (m *MockUsersRepository) InsertUser(data users.User, passHash string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertUser", data)
+	ret := m.ctrl.Call(m, "InsertUser", data, passHash)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // InsertUser indicates an expected call of InsertUser.
-func (mr *MockUsersRepositoryMockRecorder) InsertUser(data interface{}) *gomock.Call {
+func (mr *MockUsersRepositoryMockRecorder) InsertUser(data, passHash interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockUsersRepository)(nil).InsertUser), data)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockUsersRepository)(nil).InsertUser), data, passHash)
 }
 
 // SearchUsers mocks base method.

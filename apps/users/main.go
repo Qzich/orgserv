@@ -24,7 +24,12 @@ func main() {
 
 	userService := service.NewUserService(userRepo)
 	usersCtl := controller.NewUser(log, api, api, userService)
-	router := router.New(usersCtl.CreateUser, usersCtl.UsersList, usersCtl.GetUser)
+	router := router.New(
+		usersCtl.CreateUser,
+		usersCtl.UsersList,
+		usersCtl.GetUser,
+		usersCtl.AuthenticateUser,
+	)
 	ctx := context.Background()
 
 	log.Info(ctx, "Run users service")

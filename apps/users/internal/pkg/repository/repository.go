@@ -6,8 +6,9 @@ import (
 )
 
 type UsersRepository interface {
-	InsertUser(data users.User) error
+	InsertUser(data users.User, passHash string) error
 	UpdateUser(userID uuid.UUID, data users.User) error
 	GetUserByID(userID uuid.UUID) (users.User, error)
+	GetAuthUser(email string) (users.AuthUser, error)
 	SearchUsers() ([]users.User, error)
 }

@@ -30,11 +30,12 @@ func (c usersServiceClient) CreateUser(ctx context.Context, name string, email s
 	userDTO.Name = name
 	userDTO.Email = email
 	userDTO.Kind = kind.String()
+	userDTO.Password = ""
 	// TOOD: send json payload to create user endpoint
 	_ = userDTO
 
 	timeNow := time.Now().UTC()
 	userId := uuid.New()
 
-	return users.NewUser(userId, name, email, kind, userDTO.PasswordHash, timeNow, timeNow)
+	return users.NewUser(userId, name, email, kind, timeNow, timeNow)
 }

@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func New(createUser, getUsers, getUser func(w http.ResponseWriter, r *http.Request)) *http.ServeMux {
+func New(createUser, getUsers, getUser, authUser func(w http.ResponseWriter, r *http.Request)) *http.ServeMux {
 	router := http.NewServeMux()
 
 	router.HandleFunc("POST /user", createUser)
@@ -14,7 +14,7 @@ func New(createUser, getUsers, getUser func(w http.ResponseWriter, r *http.Reque
 
 	router.HandleFunc("GET /user/{id}", getUser)
 
-	// router.HandleFunc("POST /user/auth", authUser)
+	router.HandleFunc("POST /user/auth", authUser)
 
 	// router.HandleFunc("PATCH /todos/{id}", func(w http.ResponseWriter, r *http.Request) {
 	// 	id := r.PathValue("id")

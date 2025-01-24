@@ -1,13 +1,5 @@
 package users
 
-import (
-	"fmt"
-
-	"github.com/qzich/orgserv/pkg/api"
-)
-
-var KindIsNotCorrect = fmt.Errorf("kind is incorrect: %w", api.ErrValidation)
-
 type KindEnum uint8
 
 const (

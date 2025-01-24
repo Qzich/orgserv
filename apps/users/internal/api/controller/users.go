@@ -59,7 +59,7 @@ func (u users) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	// fmt.Printf("%#v", dto)
 
-	user, err := u.srv.CreateUser(r.Context(), dto.Name, dto.Email, dto.Kind)
+	user, err := u.srv.CreateUser(r.Context(), dto.Name, dto.Email, dto.Kind, dto.PassHash)
 	if err != nil {
 		u.respSender.SendErrorResponse(w, err)
 		return

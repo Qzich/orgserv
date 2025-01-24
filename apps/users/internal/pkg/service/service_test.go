@@ -17,7 +17,7 @@ func Test_service_CreateUser_Validation(t *testing.T) {
 	ctx := context.Background()
 
 	service := NewUserService(repositry)
-	_, err := service.CreateUser(ctx, "", "", "")
+	_, err := service.CreateUser(ctx, "", "", "", "")
 	if !errors.Is(err, api.ErrValidation) {
 		t.Error("expected validation error")
 	}
@@ -31,7 +31,7 @@ func Test_service_CreateUser_OK(t *testing.T) {
 	service := NewUserService(repositry)
 
 	repositry.EXPECT().InsertUser(gomock.Any()).Return(nil)
-	_, err := service.CreateUser(ctx, "test", "test@gmail.com", "customer")
+	_, err := service.CreateUser(ctx, "test", "test@gmail.com", "customer", "hash")
 	if err != nil {
 		t.Errorf("%v", err)
 	}

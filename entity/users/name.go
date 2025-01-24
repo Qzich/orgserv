@@ -1,13 +1,5 @@
 package users
 
-import (
-	"fmt"
-
-	"github.com/qzich/orgserv/pkg/api"
-)
-
-var NameIsNotCorrect = fmt.Errorf("name length is incorrect: %w", api.ErrValidation)
-
 type Name string
 
 func (name Name) Validate() error {

@@ -13,12 +13,13 @@ type User struct {
 		Name      string
 		Email     string
 		Kind      KindEnum
+		PassHash  string
 		CreatedAt time.Time
 		UpdatedAt time.Time
 	}
 }
 
-func NewUser(id uuid.UUID, name string, email string, kind KindEnum, createdAt time.Time, updatedAt time.Time) (newUser User, err error) {
+func NewUser(id uuid.UUID, name string, email string, kind KindEnum, passHash string, createdAt time.Time, updatedAt time.Time) (newUser User, err error) {
 	if id.IsZero() {
 		return User{}, errors.New("id is required")
 	}
@@ -35,6 +36,10 @@ func NewUser(id uuid.UUID, name string, email string, kind KindEnum, createdAt t
 		return User{}, err
 	}
 
+	if len(passHash) == 0 {
+		return User{}, PassHashIsNotCorrect
+	}
+
 	if createdAt.IsZero() || updatedAt.IsZero() {
 		return User{}, errors.New("created at and updated at are required")
 	}
@@ -44,6 +49,7 @@ func NewUser(id uuid.UUID, name string, email string, kind KindEnum, createdAt t
 		Name      string
 		Email     string
 		Kind      KindEnum
+		PassHash  string
 		CreatedAt time.Time
 		UpdatedAt time.Time
 	}{
@@ -51,6 +57,7 @@ func NewUser(id uuid.UUID, name string, email string, kind KindEnum, createdAt t
 		Name:      name,
 		Email:     email,
 		Kind:      kind,
+		PassHash:  passHash,
 		CreatedAt: createdAt,
 		UpdatedAt: updatedAt,
 	}
@@ -76,6 +83,10 @@ func (u User) Email() string {
 
 func (u User) Kind() KindEnum {
 	return u.value.Kind
+}
+
+func (u User) PasswordHash() string {
+	return u.value.PassHash
 }
 
 func (u User) CreatedAt() time.Time {

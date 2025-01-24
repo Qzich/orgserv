@@ -17,7 +17,7 @@ func NewUserService(repo repository.UsersRepository) usersService {
 	return usersService{repo: repo}
 }
 
-func (c usersService) CreateUser(ctx context.Context, name string, email string, kindStr string) (users.User, error) {
+func (c usersService) CreateUser(ctx context.Context, name string, email string, kindStr string, passHash string) (users.User, error) {
 	if err := users.Name(name).Validate(); err != nil {
 		return users.User{}, err
 	}
@@ -31,6 +31,10 @@ func (c usersService) CreateUser(ctx context.Context, name string, email string,
 		return users.User{}, err
 	}
 
+	if len(passHash) == 0 {
+		return users.User{}, users.PassHashIsNotCorrect
+	}
+
 	timeNow := time.Now().UTC()
 
 	user, err := users.NewUser(
@@ -38,6 +42,7 @@ func (c usersService) CreateUser(ctx context.Context, name string, email string,
 		name,
 		email,
 		kind,
+		passHash,
 		timeNow,
 		timeNow,
 	)

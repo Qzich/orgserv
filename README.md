@@ -8,3 +8,6 @@ TODO:
  - users service client
  - handle panics (500 error)
  - unit tests
+ - unit test to compare open API doc validation schema with service
+ - API gateway for auth/list endpoints etc
+ - CQRS or events sharing

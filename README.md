@@ -11,3 +11,4 @@ TODO:
  - unit test to compare open API doc validation schema with service
  - API gateway for auth/list endpoints etc
  - CQRS or events sharing
+ - migrations: add initial migration for users and one more to adding userHash field

@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/qzich/orgserv/apps/users/internal/pkg/repository"
 	"github.com/qzich/orgserv/entity/users"
+	"github.com/qzich/orgserv/pkg/api"
 	"github.com/qzich/orgserv/pkg/uuid"
 )
 
@@ -17,7 +19,8 @@ func NewUserService(repo repository.UsersRepository) usersService {
 	return usersService{repo: repo}
 }
 
-func (c usersService) CreateUser(ctx context.Context, name string, email string, kindStr string, passHash string) (users.User, error) {
+// TODO: should be plain password, not hash and service will hash it
+func (c usersService) CreateUser(ctx context.Context, name string, email string, kindStr string, password string) (users.User, error) {
 	if err := users.Name(name).Validate(); err != nil {
 		return users.User{}, err
 	}
@@ -31,9 +34,13 @@ func (c usersService) CreateUser(ctx context.Context, name string, email string,
 		return users.User{}, err
 	}
 
-	if len(passHash) == 0 {
-		return users.User{}, users.PassHashIsNotCorrect
+	// TOOD: add password specific validation rules and other error
+	if len(password) == 0 {
+		return users.User{}, fmt.Errorf("password is incorrect: %w", api.ErrValidation)
 	}
+
+	// TODO: do hash function from password here
+	passHash := "####"
 
 	timeNow := time.Now().UTC()
 

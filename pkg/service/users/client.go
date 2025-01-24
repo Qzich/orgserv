@@ -11,7 +11,7 @@ import (
 
 type usersServiceClient struct{}
 
-func (c usersServiceClient) CreateUser(ctx context.Context, name string, email string, kindStr string, passHash string) (users.User, error) {
+func (c usersServiceClient) CreateUser(ctx context.Context, name string, email string, kindStr string, password string) (users.User, error) {
 	if err := users.Name(name).Validate(); err != nil {
 		return users.User{}, err
 	}
@@ -36,5 +36,5 @@ func (c usersServiceClient) CreateUser(ctx context.Context, name string, email s
 	timeNow := time.Now().UTC()
 	userId := uuid.New()
 
-	return users.NewUser(userId, name, email, kind, passHash, timeNow, timeNow)
+	return users.NewUser(userId, name, email, kind, userDTO.PasswordHash, timeNow, timeNow)
 }

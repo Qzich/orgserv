@@ -44,7 +44,7 @@ func (r usersRepository) InsertUser(data users.User, passHash password.Hash) err
 	}
 
 	_, err := r.db.Exec(
-		"INSERT INTO users (user_id, name, email, kind, passHash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+		"INSERT INTO users (user_id, name, email, kind, pass_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
 		data.ID().String(),
 		data.Name(),
 		data.Email(),
@@ -70,7 +70,7 @@ func (r usersRepository) GetAuthUser(email string) (entity.AuthUser, error) {
 		passHash password.Hash
 	)
 	err := r.db.QueryRow(
-		"SELECT id, user_id, name, kind, passHash, created_at, updated_at FROM users WHERE email = ? LIMIT 1", email,
+		"SELECT id, user_id, name, kind, pass_hash, created_at, updated_at FROM users WHERE email = ? LIMIT 1", email,
 	).Scan(&dao.ID, &dao.UserID, &dao.Name, &dao.Kind, &passHash, &dao.CreatedAt, &dao.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {

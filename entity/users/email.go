@@ -8,7 +8,7 @@ type Email string
 
 func (e Email) Validate() error {
 	if _, err := mail.ParseAddress(string(e)); err != nil {
-		return EmailIsNotCorrect
+		return ErrEmailIsNotCorrect
 	}
 
 	return nil

@@ -43,6 +43,10 @@ func (r usersRepository) InsertUser(data users.User, passHash password.Hash) err
 		return api.ErrValidation
 	}
 
+	if len(passHash) == 0 {
+		return entity.ErrPassHashIsNotCorrect
+	}
+
 	_, err := r.db.Exec(
 		"INSERT INTO users (user_id, name, email, kind, pass_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
 		data.ID().String(),

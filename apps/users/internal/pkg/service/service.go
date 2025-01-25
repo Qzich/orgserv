@@ -2,13 +2,12 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"time"
 
+	"github.com/qzich/orgserv/apps/users/internal/entity"
 	"github.com/qzich/orgserv/apps/users/internal/pkg/password"
 	"github.com/qzich/orgserv/apps/users/internal/pkg/repository"
 	"github.com/qzich/orgserv/entity/users"
-	"github.com/qzich/orgserv/pkg/api"
 	"github.com/qzich/orgserv/pkg/uuid"
 )
 
@@ -25,9 +24,8 @@ func (c usersService) AuthenticateUser(ctx context.Context, email string, pass s
 		return users.User{}, err
 	}
 
-	// TOOD: add password specific validation rules and other error
-	if len(pass) == 0 {
-		return users.User{}, fmt.Errorf("password is incorrect: %w", api.ErrValidation)
+	if err := entity.Password(pass).Validate(); err != nil {
+		return users.User{}, err
 	}
 
 	authUser, err := c.repo.GetAuthUser(email)
@@ -59,9 +57,8 @@ func (c usersService) CreateUser(ctx context.Context, name string, email string,
 		return users.User{}, err
 	}
 
-	// TOOD: add password specific validation rules and other error
-	if len(pass) == 0 {
-		return users.User{}, fmt.Errorf("password is incorrect: %w", api.ErrValidation)
+	if err := entity.Password(pass).Validate(); err != nil {
+		return users.User{}, err
 	}
 
 	passHash, err := password.GenerateHash(pass)

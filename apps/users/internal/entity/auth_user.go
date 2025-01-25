@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"fmt"
-
 	"github.com/qzich/orgserv/apps/users/internal/pkg/password"
 	"github.com/qzich/orgserv/entity/users"
 	"github.com/qzich/orgserv/pkg/api"
@@ -21,7 +19,7 @@ func NewAuthUser(user users.User, passHash password.Hash) (authUser AuthUser, er
 	}
 
 	if len(passHash) == 0 {
-		return AuthUser{}, users.PassHashIsNotCorrect
+		return AuthUser{}, ErrPassHashIsNotCorrect
 	}
 
 	authUser.value = &struct {
@@ -40,5 +38,5 @@ func (a AuthUser) Authenticate(verify func(password.Hash) bool) (users.User, err
 		return a.value.user, nil
 	}
 
-	return users.User{}, fmt.Errorf("authentication is failed: %w", api.ErrValidation)
+	return users.User{}, ErrAuthFailed
 }

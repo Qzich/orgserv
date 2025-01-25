@@ -15,7 +15,7 @@ func ParseKindFromString(s string) (KindEnum, error) {
 		return KindSupport, nil
 	}
 
-	return 0, KindIsNotCorrect
+	return 0, ErrKindIsNotCorrect
 }
 
 func (k KindEnum) Validate() error {
@@ -24,7 +24,7 @@ func (k KindEnum) Validate() error {
 		return nil
 	}
 
-	return KindIsNotCorrect
+	return ErrKindIsNotCorrect
 }
 
 func (k KindEnum) String() string {

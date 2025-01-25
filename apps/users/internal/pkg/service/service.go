@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/qzich/orgserv/apps/users/internal/entity"
+	"github.com/qzich/orgserv/apps/users/internal/pkg/password"
 	"github.com/qzich/orgserv/apps/users/internal/pkg/repository"
 	"github.com/qzich/orgserv/entity/users"
-	"github.com/qzich/orgserv/pkg"
 	"github.com/qzich/orgserv/pkg/api"
 	"github.com/qzich/orgserv/pkg/uuid"
 )
@@ -21,13 +20,13 @@ func NewUserService(repo repository.UsersRepository) usersService {
 	return usersService{repo: repo}
 }
 
-func (c usersService) AuthenticateUser(ctx context.Context, email string, password string) (users.User, error) {
+func (c usersService) AuthenticateUser(ctx context.Context, email string, pass string) (users.User, error) {
 	if err := users.Email(email).Validate(); err != nil {
 		return users.User{}, err
 	}
 
 	// TOOD: add password specific validation rules and other error
-	if len(password) == 0 {
+	if len(pass) == 0 {
 		return users.User{}, fmt.Errorf("password is incorrect: %w", api.ErrValidation)
 	}
 
@@ -36,15 +35,17 @@ func (c usersService) AuthenticateUser(ctx context.Context, email string, passwo
 		return users.User{}, err
 	}
 
-	if !c.authenticate(authUser, password) {
-		// TODO: add auth error
-		return users.User{}, fmt.Errorf("authentication is failed: %w", api.ErrValidation)
+	user, err := authUser.Authenticate(
+		password.VerifyWithPass(pass),
+	)
+	if err != nil {
+		return users.User{}, err
 	}
 
-	return authUser.User(), nil
+	return user, nil
 }
 
-func (c usersService) CreateUser(ctx context.Context, name string, email string, kindStr string, password string) (users.User, error) {
+func (c usersService) CreateUser(ctx context.Context, name string, email string, kindStr string, pass string) (users.User, error) {
 	if err := users.Name(name).Validate(); err != nil {
 		return users.User{}, err
 	}
@@ -59,11 +60,14 @@ func (c usersService) CreateUser(ctx context.Context, name string, email string,
 	}
 
 	// TOOD: add password specific validation rules and other error
-	if len(password) == 0 {
+	if len(pass) == 0 {
 		return users.User{}, fmt.Errorf("password is incorrect: %w", api.ErrValidation)
 	}
 
-	passHash := c.hashPassword(password)
+	passHash, err := password.GenerateHash(pass)
+	if err != nil {
+		return users.User{}, err
+	}
 
 	timeNow := time.Now().UTC()
 
@@ -79,11 +83,7 @@ func (c usersService) CreateUser(ctx context.Context, name string, email string,
 		return users.User{}, err
 	}
 
-	return user, c.repo.InsertUser(
-		pkg.Must(
-			entity.NewAuthUser(user, passHash),
-		),
-	)
+	return user, c.repo.InsertUser(user, passHash)
 }
 
 func (c usersService) GetUser(ctx context.Context, userId uuid.UUID) (users.User, error) {
@@ -101,13 +101,4 @@ func (c usersService) AllUsers(ctx context.Context) ([]users.User, error) {
 	}
 
 	return searchUsers, nil
-}
-
-func (c usersService) hashPassword(password string) string {
-	// TODO: do hash function from password here
-	return "###"
-}
-
-func (c usersService) authenticate(authUser entity.AuthUser, pass string) bool {
-	return authUser.PasswordHash() == c.hashPassword(pass)
 }

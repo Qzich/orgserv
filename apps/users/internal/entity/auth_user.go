@@ -1,6 +1,9 @@
 package entity
 
 import (
+	"fmt"
+
+	"github.com/qzich/orgserv/apps/users/internal/pkg/password"
 	"github.com/qzich/orgserv/entity/users"
 	"github.com/qzich/orgserv/pkg/api"
 )
@@ -8,11 +11,11 @@ import (
 type AuthUser struct {
 	value *struct {
 		user     users.User
-		passHash string
+		passHash password.Hash
 	}
 }
 
-func NewAuthUser(user users.User, passHash string) (authUser AuthUser, err error) {
+func NewAuthUser(user users.User, passHash password.Hash) (authUser AuthUser, err error) {
 	if user.IsZero() {
 		return AuthUser{}, api.ErrValidation
 	}
@@ -23,7 +26,7 @@ func NewAuthUser(user users.User, passHash string) (authUser AuthUser, err error
 
 	authUser.value = &struct {
 		user     users.User
-		passHash string
+		passHash password.Hash
 	}{
 		user:     user,
 		passHash: passHash,
@@ -32,20 +35,10 @@ func NewAuthUser(user users.User, passHash string) (authUser AuthUser, err error
 	return
 }
 
-// func (a AuthUser) Authenticate(pass string) bool {
-// 	// TODO: hash pass and compare with stored hash
-// 	return true
-// 	// return u.value.PassHash
-// }
+func (a AuthUser) Authenticate(verify func(password.Hash) bool) (users.User, error) {
+	if verify(a.value.passHash) {
+		return a.value.user, nil
+	}
 
-func (u AuthUser) IsZero() bool {
-	return u.value == nil
-}
-
-func (a AuthUser) User() users.User {
-	return a.value.user
-}
-
-func (a AuthUser) PasswordHash() string {
-	return a.value.passHash
+	return users.User{}, fmt.Errorf("authentication is failed: %w", api.ErrValidation)
 }

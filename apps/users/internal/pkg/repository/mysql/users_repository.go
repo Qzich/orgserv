@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/qzich/orgserv/apps/users/internal/entity"
+	"github.com/qzich/orgserv/apps/users/internal/pkg/password"
 	"github.com/qzich/orgserv/entity/users"
 	"github.com/qzich/orgserv/pkg"
 	"github.com/qzich/orgserv/pkg/api"
@@ -37,23 +38,20 @@ func NewUsersRepository(connectionString string) (usersRepository, *sql.DB) {
 	return usersRepository{db: db}, db
 }
 
-func (r usersRepository) InsertUser(data entity.AuthUser) error {
+func (r usersRepository) InsertUser(data users.User, passHash password.Hash) error {
 	if data.IsZero() {
 		return api.ErrValidation
 	}
 
-	user := data.User()
-	passHash := data.PasswordHash()
-
 	_, err := r.db.Exec(
 		"INSERT INTO users (user_id, name, email, kind, passHash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-		user.ID().String(),
-		user.Name(),
-		user.Email(),
-		user.Kind().String(), // TODO: use kind value or id
+		data.ID().String(),
+		data.Name(),
+		data.Email(),
+		data.Kind().String(), // TODO: use kind value or id
 		passHash,
-		user.CreatedAt(),
-		user.UpdatedAt(),
+		data.CreatedAt(),
+		data.UpdatedAt(),
 	)
 	if err != nil {
 		return err
@@ -69,7 +67,7 @@ func (r usersRepository) UpdateUser(userID uuid.UUID, data users.User) error {
 func (r usersRepository) GetAuthUser(email string) (entity.AuthUser, error) {
 	var (
 		dao      userDAO
-		passHash string
+		passHash password.Hash
 	)
 	err := r.db.QueryRow(
 		"SELECT id, user_id, name, kind, passHash, created_at, updated_at FROM users WHERE email = ? LIMIT 1", email,
